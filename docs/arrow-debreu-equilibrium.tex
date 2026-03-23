@@ -1,0 +1,136 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+
+\title{Arrow-Debreu Equilibrium: Existence, Welfare, and Computation}
+\author{Abhi Wadhwa}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Notes on the Arrow-Debreu model of general equilibrium. I cover the basic setup of exchange economies, work through the existence proof via Kakutani's fixed point theorem, state and prove the two welfare theorems, and then get into the computational side---tatonnement dynamics and when they actually converge. The math is genuinely beautiful once you see how the pieces fit together, though the fixed-point argument took me a few reads to really internalize.
+\end{abstract}
+
+\section{The Exchange Economy}
+
+Consider $I$ consumers and $L$ goods. Consumer $i$ has an endowment $e_i \in \mathbb{R}^L_+$ and a utility function $u_i : \mathbb{R}^L_+ \to \mathbb{R}$. The total endowment in the economy is $\bar{e} = \sum_{i=1}^I e_i$.
+
+Given prices $p \in \mathbb{R}^L_+$, consumer $i$'s income is $m_i = p \cdot e_i$, and they solve
+\[
+\max_{x_i \geq 0} \; u_i(x_i) \quad \text{subject to} \quad p \cdot x_i \leq p \cdot e_i.
+\]
+This gives a demand function (or correspondence) $x_i(p)$.
+
+\begin{definition}
+A \textbf{Walrasian equilibrium} is a price vector $p^*$ and allocations $(x_1^*, \ldots, x_I^*)$ such that:
+\begin{enumerate}
+\item Each $x_i^*$ solves consumer $i$'s utility maximization problem at prices $p^*$.
+\item Markets clear: $\sum_{i=1}^I x_i^* = \sum_{i=1}^I e_i$.
+\end{enumerate}
+\end{definition}
+
+The \textbf{excess demand function} is $z(p) = \sum_i x_i(p) - \bar{e}$. Finding an equilibrium is equivalent to finding $p^*$ with $z(p^*) = 0$.
+
+\section{Walras' Law and Homogeneity}
+
+Two basic properties fall out immediately from budget constraints.
+
+\textbf{Walras' Law}: For any price vector $p$, we have $p \cdot z(p) = 0$. The proof is almost trivial---each consumer exhausts their budget, so $p \cdot x_i(p) = p \cdot e_i$ for all $i$. Sum over $i$ and you get $p \cdot \sum_i x_i(p) = p \cdot \bar{e}$, which rearranges to $p \cdot z(p) = 0$.
+
+The practical consequence is nice: if $L-1$ markets clear, the $L$-th one clears automatically. You can normalize one price to 1 (the num\'eraire) and only worry about $L-1$ equations.
+
+\textbf{Homogeneity of degree zero}: $z(\lambda p) = z(p)$ for all $\lambda > 0$. Only relative prices matter, not absolute levels. This is why we can restrict attention to the price simplex $\Delta = \{p \geq 0 : \sum_\ell p_\ell = 1\}$.
+
+\section{Existence of Equilibrium}
+
+The existence proof is the crown jewel of this theory. Arrow and Debreu (1954) showed that under reasonable assumptions---continuous, strictly quasi-concave, locally non-satiated utility functions---an equilibrium exists.
+
+The idea is to construct a correspondence $\phi : \Delta \to \Delta$ and show it has a fixed point. Here's the sketch. Given prices $p$, consumers demand $x_i(p)$, which generates excess demand $z(p)$. Now define a ``price update'' that raises the price of goods in excess demand and lowers it for goods in excess supply. Formally, consider the correspondence
+\[
+\phi(p) = \arg\max_{q \in \Delta} \; q \cdot z(p).
+\]
+This pushes prices in the direction of excess demand. The combined map $(p \mapsto z(p) \mapsto \phi(p))$ maps the simplex to itself.
+
+\begin{theorem}[Kakutani's Fixed Point Theorem]
+If $\Delta$ is a compact convex subset of $\mathbb{R}^L$, and $\phi : \Delta \rightrightarrows \Delta$ is an upper-hemicontinuous correspondence with non-empty, convex values, then $\phi$ has a fixed point: there exists $p^*$ with $p^* \in \phi(p^*)$.
+\end{theorem}
+
+The trick here is checking the conditions. Compactness and convexity of $\Delta$ are obvious. Upper-hemicontinuity of the demand correspondence follows from the maximum theorem (Berge). The convex-values condition needs quasi-concavity of utility. Once you verify all this, Kakutani delivers $p^*$ with $p^* \in \phi(p^*)$, and then you use Walras' Law to show $z(p^*) = 0$.
+
+I won't lie---the first time I went through this proof, I found the correspondence gymnastics confusing. But the geometric intuition is clean: you're looking for prices where there's no direction you can push to ``improve'' the market clearing, and that's exactly a fixed point.
+
+\section{The First Welfare Theorem}
+
+\begin{theorem}[First Welfare Theorem]
+If $(p^*, x^*)$ is a Walrasian equilibrium and preferences are locally non-satiated, then $x^*$ is Pareto optimal.
+\end{theorem}
+
+This is the ``invisible hand'' theorem, and the proof is delightfully short. Suppose $x^*$ is not Pareto optimal, so there exists a feasible allocation $y$ with $u_i(y_i) \geq u_i(x_i^*)$ for all $i$ and strict for some $i$. By local non-satiation, if $u_i(y_i) \geq u_i(x_i^*)$ then $p^* \cdot y_i \geq p^* \cdot x_i^* = p^* \cdot e_i$ (otherwise $y_i$ would have been affordable and preferred, contradicting optimality). For the agent with strict preference, $p^* \cdot y_i > p^* \cdot e_i$. Summing: $p^* \cdot \sum_i y_i > p^* \cdot \sum_i e_i$. But feasibility requires $\sum_i y_i = \bar{e}$, giving $p^* \cdot \bar{e} > p^* \cdot \bar{e}$---a contradiction. $\square$
+
+\textbf{Notice that this requires almost nothing}---just local non-satiation. No convexity, no continuity beyond what's needed for equilibrium to exist. It's easy to see that the market ``uses up'' all the gains from trade.
+
+\section{The Second Welfare Theorem}
+
+\begin{theorem}[Second Welfare Theorem]
+If $x^*$ is a Pareto optimal allocation and preferences are convex and continuous, then there exist prices $p^*$ and lump-sum transfers $T_i$ (with $\sum_i T_i = 0$) such that $(p^*, x^*)$ is a Walrasian equilibrium for the economy where agent $i$'s wealth is $p^* \cdot e_i + T_i$.
+\end{theorem}
+
+This is the more subtle result. It says any Pareto optimal allocation can be ``decentralized'' through markets, as long as you redistribute income first. The proof uses the supporting hyperplane theorem (or, in the general case, the Hahn-Banach theorem). At a Pareto optimum, the upper contour sets $\{x : u_i(x) \geq u_i(x_i^*)\}$ are convex. The aggregate ``better-than'' set doesn't intersect the aggregate endowment from below, so there's a separating hyperplane---and that hyperplane is the price vector.
+
+The practical implication is that if you don't like the equilibrium distribution of welfare, the fix is transfers, not price controls. Markets do the allocation efficiently; redistribution is a separate problem. Of course, this relies on lump-sum transfers being feasible, which is a big ``if'' in practice.
+
+\section{Tatonnement Dynamics}
+
+How do you actually \emph{compute} an equilibrium? The classical approach is Walras's tatonnement (``groping'') process. An imaginary auctioneer adjusts prices according to
+\[
+\frac{dp_\ell}{dt} = z_\ell(p), \quad \ell = 1, \ldots, L.
+\]
+Prices of goods in excess demand rise; prices of goods in excess supply fall.
+
+Does this converge? Not always. But it does under the \textbf{gross substitutes} condition: when the price of good $k$ increases, demand for every other good $j \neq k$ increases (or at least doesn't decrease). With gross substitutes, the equilibrium is unique and globally stable---tatonnement converges from any starting prices.
+
+The discrete version is straightforward:
+\[
+p_\ell^{t+1} = \max\left(0, \; p_\ell^t + \eta \cdot z_\ell(p^t)\right)
+\]
+followed by normalization to the simplex. The step size $\eta$ matters for convergence speed, and you need to be a bit careful with it in practice.
+
+For economies without gross substitutes, tatonnement can cycle (Scarf, 1960, gave famous counterexamples). In that case, you can use Scarf's combinatorial algorithm, which finds approximate fixed points by systematically searching the simplex. It's guaranteed to terminate but can be slow. Modern approaches use the Eisenberg-Gale convex program for economies with homogeneous utilities---you solve a single convex optimization problem and read off equilibrium prices from the dual variables. Much faster in practice.
+
+\section{The Edgeworth Box}
+
+For two agents and two goods, everything collapses to a beautiful geometric picture. The Edgeworth box has dimensions $\bar{e}_1 \times \bar{e}_2$ (total endowments). Agent 1's origin is the bottom-left corner; agent 2's is the top-right.
+
+The \textbf{contract curve} is the locus of Pareto optimal allocations---points where the marginal rates of substitution are equal:
+\[
+\frac{\partial u_1 / \partial x_1}{\partial u_1 / \partial x_2} = \frac{\partial u_2 / \partial x_1}{\partial u_2 / \partial x_2}.
+\]
+The \textbf{core} is the part of the contract curve that both agents prefer to the initial endowment. The competitive equilibrium lies in the core---it's the point where the budget line through the endowment is tangent to both agents' indifference curves simultaneously.
+
+For Cobb-Douglas utilities $u_i(x) = x_1^{\alpha_i} x_2^{1-\alpha_i}$, you can solve everything in closed form. I find this case really useful for building intuition before tackling the general theory.
+
+\section{Wrapping Up}
+
+The Arrow-Debreu model is one of the most elegant constructions in economic theory. The existence theorem tells us that competitive markets can, in principle, coordinate decentralized decisions into a coherent outcome. The welfare theorems tell us that outcome is efficient, and that any efficient outcome is achievable through markets plus transfers. The computational story is messier---tatonnement works under gross substitutes but fails in general---but there are modern algorithms that handle the computation well.
+
+What I find most striking is the interplay between fixed-point theory and economics. The prices are literally a fixed point of the market feedback process, and the deep mathematics of Brouwer and Kakutani gives us existence without having to construct the solution explicitly.
+
+\begin{thebibliography}{9}
+\bibitem{arrow1954} K.~J.~Arrow and G.~Debreu, ``Existence of an Equilibrium for a Competitive Economy,'' \emph{Econometrica}, vol.~22, no.~3, pp.~265--290, 1954.
+
+\bibitem{mascolell1995} A.~Mas-Colell, M.~D.~Whinston, and J.~R.~Green, \emph{Microeconomic Theory}, Oxford University Press, 1995.
+
+\bibitem{scarf1967} H.~E.~Scarf, ``The Approximation of Fixed Points of a Continuous Mapping,'' \emph{SIAM Journal on Applied Mathematics}, vol.~15, no.~5, pp.~1328--1343, 1967.
+
+\bibitem{eisenberg1959} E.~Eisenberg and D.~Gale, ``Consensus of Subjective Probabilities: The Pari-Mutuel Method,'' \emph{Annals of Mathematical Statistics}, vol.~30, no.~1, pp.~165--168, 1959.
+
+\bibitem{scarf1960} H.~E.~Scarf, ``Some Examples of Global Instability of the Competitive Equilibrium,'' \emph{International Economic Review}, vol.~1, no.~3, pp.~157--172, 1960.
+\end{thebibliography}
+
+\end{document}

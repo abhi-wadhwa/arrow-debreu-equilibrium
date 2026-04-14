@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 
 from src.core.economy import Agent, ExchangeEconomy
-from src.core.utilities import CobbDouglas, CES
 from src.core.tatonnement import tatonnement
+from src.core.utilities import CobbDouglas
 
 
 class TestDiscreteTatonnement:

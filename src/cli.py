@@ -10,16 +10,15 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import sys
 
 import numpy as np
 
+from src.core.demand import market_clearing_check, verify_walras_law
 from src.core.economy import Agent, ExchangeEconomy
-from src.core.utilities import CobbDouglas, CES, Leontief
-from src.core.demand import compute_excess_demand, verify_walras_law, market_clearing_check
-from src.core.tatonnement import tatonnement
-from src.core.eisenberg_gale import eisenberg_gale
 from src.core.edgeworth import EdgeworthBox
+from src.core.eisenberg_gale import eisenberg_gale
+from src.core.tatonnement import tatonnement
+from src.core.utilities import CobbDouglas
 from src.core.welfare import verify_first_welfare_theorem, verify_second_welfare_theorem
 
 
@@ -149,8 +148,8 @@ def run_edgeworth() -> None:
 
 def launch_app() -> None:
     """Launch the Streamlit dashboard."""
-    import subprocess
     import os
+    import subprocess
 
     app_path = os.path.join(os.path.dirname(__file__), "viz", "app.py")
     subprocess.run(["streamlit", "run", app_path])

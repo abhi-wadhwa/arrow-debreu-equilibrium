@@ -23,10 +23,9 @@ from dataclasses import dataclass
 
 import numpy as np
 from numpy.typing import NDArray
-from scipy.optimize import minimize, LinearConstraint
+from scipy.optimize import minimize
 
 from src.core.economy import ExchangeEconomy
-from src.core.utilities import CobbDouglas, CES
 
 
 @dataclass
@@ -117,8 +116,6 @@ def eisenberg_gale(
     for j in range(m):
         for i in range(n):
             A_feas[j, i * m + j] = 1.0
-
-    linear_constraint = LinearConstraint(A_feas, lb=0.0, ub=total_endowment)
 
     # Initial guess: give each agent their endowment
     x0 = np.concatenate([a.endowment for a in economy.agents])

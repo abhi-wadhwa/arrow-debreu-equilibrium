@@ -1,16 +1,16 @@
 """Core modules for Arrow-Debreu exchange economy computation."""
 
+from src.core.demand import compute_demand, compute_excess_demand
 from src.core.economy import Agent, ExchangeEconomy
+from src.core.edgeworth import EdgeworthBox
+from src.core.eisenberg_gale import eisenberg_gale
+from src.core.tatonnement import tatonnement
 from src.core.utilities import (
-    CobbDouglas,
     CES,
+    CobbDouglas,
     Leontief,
     QuasiLinear,
 )
-from src.core.demand import compute_demand, compute_excess_demand
-from src.core.tatonnement import tatonnement
-from src.core.eisenberg_gale import eisenberg_gale
-from src.core.edgeworth import EdgeworthBox
 from src.core.welfare import (
     verify_first_welfare_theorem,
     verify_second_welfare_theorem,

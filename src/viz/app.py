@@ -10,23 +10,20 @@ Features:
 
 from __future__ import annotations
 
-import sys
 import os
+import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-from matplotlib.collections import LineCollection
 
 # Ensure the project root is on the path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from src.core.economy import Agent, ExchangeEconomy
-from src.core.utilities import CobbDouglas, CES, Leontief
-from src.core.tatonnement import tatonnement
-from src.core.eisenberg_gale import eisenberg_gale
 from src.core.edgeworth import EdgeworthBox
+from src.core.tatonnement import tatonnement
+from src.core.utilities import CobbDouglas
 from src.core.welfare import verify_first_welfare_theorem, verify_second_welfare_theorem
 
 
@@ -163,9 +160,15 @@ def _edgeworth_box_tab() -> None:
     ic_a_endow = box.indifference_curve(0, endow_u_a)
     ic_b_endow = box.indifference_curve(1, endow_u_b)
     if len(ic_a_endow) > 0:
-        ax.plot(ic_a_endow[:, 0], ic_a_endow[:, 1], "r:", linewidth=1, alpha=0.5, label="IC Agent A (endowment)")
+        ax.plot(
+            ic_a_endow[:, 0], ic_a_endow[:, 1],
+            "r:", linewidth=1, alpha=0.5, label="IC Agent A (endowment)",
+        )
     if len(ic_b_endow) > 0:
-        ax.plot(ic_b_endow[:, 0], ic_b_endow[:, 1], "m:", linewidth=1, alpha=0.5, label="IC Agent B (endowment)")
+        ax.plot(
+            ic_b_endow[:, 0], ic_b_endow[:, 1],
+            "m:", linewidth=1, alpha=0.5, label="IC Agent B (endowment)",
+        )
 
     # Points
     ax.plot(*agent_a.endowment, "ko", markersize=10, label="Endowment", zorder=5)
@@ -184,7 +187,8 @@ def _edgeworth_box_tab() -> None:
         st.metric("Agent A Utility (CE)", f"{ce_u_a:.4f}")
         st.metric("Agent A Utility (endowment)", f"{endow_u_a:.4f}")
     with col_r2:
-        st.metric("CE Allocation A", f"({result.ce_allocation[0]:.3f}, {result.ce_allocation[1]:.3f})")
+        ce_a = result.ce_allocation
+        st.metric("CE Allocation A", f"({ce_a[0]:.3f}, {ce_a[1]:.3f})")
         st.metric("Agent B Utility (CE)", f"{ce_u_b:.4f}")
         st.metric("Agent B Utility (endowment)", f"{endow_u_b:.4f}")
 
@@ -356,7 +360,10 @@ def _multi_good_tab() -> None:
     if len(sign_changes) > 0:
         idx = sign_changes[0]
         p1_eq = p1_vals[idx]
-        ax.axvline(x=p1_eq, color="green", linewidth=1.5, linestyle=":", label=f"CE at p1={p1_eq:.3f}")
+        ax.axvline(
+            x=p1_eq, color="green", linewidth=1.5,
+            linestyle=":", label=f"CE at p1={p1_eq:.3f}",
+        )
         ax.legend(fontsize=11)
 
     st.pyplot(fig)

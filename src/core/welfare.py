@@ -22,7 +22,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.optimize import minimize
 
-from src.core.economy import Agent, ExchangeEconomy
+from src.core.economy import ExchangeEconomy
 
 
 @dataclass
@@ -166,7 +166,12 @@ def _try_pareto_improvement(
         def _feas2(x_flat: NDArray, j_=j) -> float:
             s = sum(x_flat[i * m + j_] for i in range(n))
             return s - total[j_]  # >= 0 means sum >= total
-        constraints.append({"type": "eq", "fun": lambda x, j_=j: sum(x[i * m + j_] for i in range(n)) - total[j_]})
+        constraints.append({
+            "type": "eq",
+            "fun": lambda x, j_=j: sum(
+                x[i * m + j_] for i in range(n)
+            ) - total[j_],
+        })
 
     # Each non-target agent must be at least as well off
     for i in range(n):
@@ -226,7 +231,6 @@ def verify_second_welfare_theorem(
     WelfareResult
     """
     n = economy.num_agents
-    m = economy.num_goods
 
     u_target = np.array([
         economy.agents[i].utility(target_allocation[i]) for i in range(n)

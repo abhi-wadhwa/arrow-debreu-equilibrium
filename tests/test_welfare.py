@@ -1,15 +1,14 @@
 """Tests for welfare theorem verification."""
 
 import numpy as np
-import pytest
 
 from src.core.economy import Agent, ExchangeEconomy
-from src.core.utilities import CobbDouglas
 from src.core.tatonnement import tatonnement
+from src.core.utilities import CobbDouglas
 from src.core.welfare import (
+    is_pareto_optimal,
     verify_first_welfare_theorem,
     verify_second_welfare_theorem,
-    is_pareto_optimal,
 )
 
 

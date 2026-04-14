@@ -1,16 +1,13 @@
 """Tests for demand computation and Walras' Law."""
 
 import numpy as np
-import pytest
 
-from src.core.economy import Agent, ExchangeEconomy
-from src.core.utilities import CobbDouglas, CES, Leontief, QuasiLinear
 from src.core.demand import (
-    compute_demand,
-    compute_excess_demand,
-    verify_walras_law,
     market_clearing_check,
+    verify_walras_law,
 )
+from src.core.economy import Agent, ExchangeEconomy
+from src.core.utilities import CES, CobbDouglas, Leontief, QuasiLinear
 
 
 class TestCobbDouglasDemand:

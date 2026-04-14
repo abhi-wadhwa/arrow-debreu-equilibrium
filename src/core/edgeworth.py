@@ -19,7 +19,7 @@ from dataclasses import dataclass
 
 import numpy as np
 from numpy.typing import NDArray
-from scipy.optimize import brentq, minimize_scalar
+from scipy.optimize import brentq
 
 from src.core.economy import Agent, ExchangeEconomy
 from src.core.utilities import CobbDouglas
@@ -236,8 +236,6 @@ class EdgeworthBox:
             allocation is agent 1's bundle (shape (2,)).
             prices is normalised price vector with p[0] = 1.
         """
-        omega = self.agent1.endowment
-
         # Find price ratio p1/p2 such that markets clear
         def _excess_good1(price_ratio: float) -> float:
             """Excess demand for good 1 at price (1, price_ratio)."""
@@ -250,10 +248,9 @@ class EdgeworthBox:
         except ValueError:
             # Fallback: grid search then refine
             ratios = np.logspace(-3, 3, 1000)
-            z_vals = [_excess_good1(r) for r in ratios]
-            z_vals = np.array(z_vals)
+            z_arr = np.array([_excess_good1(r) for r in ratios])
             # Find sign change
-            sign_changes = np.where(np.diff(np.sign(z_vals)))[0]
+            sign_changes = np.where(np.diff(np.sign(z_arr)))[0]
             if len(sign_changes) == 0:
                 raise RuntimeError("Could not find competitive equilibrium.")
             idx = sign_changes[0]

@@ -177,7 +177,6 @@ def _ode_tatonnement(
 
     Solves  dp/dt = z(p)  with projection onto the simplex.
     """
-    m = len(p0)
     t_eval = np.linspace(t_span[0], t_span[1], t_eval_points)
 
     def rhs(t: float, p: NDArray[np.float64]) -> NDArray[np.float64]:

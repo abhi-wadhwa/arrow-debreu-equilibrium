@@ -3,9 +3,9 @@
 import numpy as np
 import pytest
 
-from src.core.economy import Agent, ExchangeEconomy
-from src.core.utilities import CobbDouglas
+from src.core.economy import Agent
 from src.core.edgeworth import EdgeworthBox
+from src.core.utilities import CobbDouglas
 
 
 class TestEdgeworthBox:
